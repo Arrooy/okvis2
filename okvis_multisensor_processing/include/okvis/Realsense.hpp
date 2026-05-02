@@ -64,32 +64,26 @@ public:
   /// @brief The supported sensor types. Only D435i and D455 for now.
   enum class SensorType {
     D435i,
-    D455
+    D455,
+    Unknown
   };
 
   /// @brief Constructor. Won't start the streaming.
-  /// @param sensorType Specify the sensor type. Only D435i for now.
   /// @param enableRgb Enable RGB camera?
-  Realsense(SensorType sensorType, bool enableRgb = false);
+  Realsense(bool enableRgb = false);
 
   /// @brief Alternative constructor. Won't start the streaming.
-  /// @param sensorType Specify the sensor type.
   /// @param enableRgb Enable RGB camera?
   /// @param hasDeviceTimestamps Has kernel patch for device timestamps?
   /// @param rgbSize RGB image size.
   /// @param irSize IR image size.
-  Realsense(SensorType sensorType,
-            bool enableRgb,
+  Realsense(bool enableRgb,
             bool hasDeviceTimestamps,
             const cv::Size& rgbSize,
             const cv::Size& irSize);
 
   /// @brief Destructor. Will also stop the streaming, if started.
   virtual ~Realsense();
-
-  /// @brief Set the sensor type. Only D435i for now.
-  /// @param sensorType Specify the sensor type.
-  void setSensorType(SensorType sensorType);
 
   /// @brief Manually overwrite flag for supporting metadata retrieval.
   /// @param hasDeviceTimestamps Has kernel patch for device timestamps?

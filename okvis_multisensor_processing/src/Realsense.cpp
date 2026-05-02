@@ -41,15 +41,14 @@
 
 namespace okvis {
 
-Realsense::Realsense(SensorType sensorType, bool enableRgb)
-    : streaming_(false), started_(false), sensorType_(sensorType), enableRgb_(enableRgb) {}
+Realsense::Realsense(bool enableRgb)
+    : streaming_(false), started_(false), sensorType_(SensorType::Unknown), enableRgb_(enableRgb) {}
 
-Realsense::Realsense(okvis::Realsense::SensorType sensorType,
-                     bool enableRgb,
+Realsense::Realsense(bool enableRgb,
                      bool hasDeviceTimestamps,
                      const cv::Size &rgbSize,
                      const cv::Size &irSize)
-: streaming_(false), started_(false), sensorType_(sensorType),
+: streaming_(false), started_(false), sensorType_(SensorType::Unknown),
     hasDeviceTimestamps_(hasDeviceTimestamps), enableRgb_(enableRgb),
   irSize_(irSize), rgbSize_(rgbSize) {}
 
@@ -57,10 +56,6 @@ Realsense::~Realsense() {
   if(streaming_) {
     stopStreaming();
   }
-}
-
-void Realsense::setSensorType(Realsense::SensorType sensorType) {
-  sensorType_ = sensorType;
 }
 
 void Realsense::processFrame(const rs2::frame& frame) {
@@ -317,8 +312,9 @@ bool Realsense::isStreaming() {
 std::string Realsense::getDeviceName(const rs2::device& dev) {
   // Each device provides some information on itself, such as name:
   std::string name = "Unknown Device";
-  if (dev.supports(RS2_CAMERA_INFO_NAME))
-     name = dev.get_info(RS2_CAMERA_INFO_NAME);
+  if (dev.supports(RS2_CAMERA_INFO_NAME)) {
+    name = dev.get_info(RS2_CAMERA_INFO_NAME);
+  }
 
   // and the serial number of the device:
   std::string sn = "########";
@@ -345,6 +341,20 @@ bool Realsense::checkSupport() {
   rs2::context ctx;
   for (const auto& dev : ctx.query_devices())
   {
+    // check and set the type
+    std::string name = "Unknown Device";
+    if (dev.supports(RS2_CAMERA_INFO_NAME)) {
+      name = dev.get_info(RS2_CAMERA_INFO_NAME);
+    }
+    if(name.find("D435I") != std::string::npos) {
+      sensorType_ = SensorType::D435i;
+    } else if(name.find("D455") != std::string::npos) {
+      sensorType_ = SensorType::D455;
+    } else {
+      LOG(WARNING) << "Unknown RealSense device: " << name;
+      sensorType_ = SensorType::Unknown;
+    }
+
     // The same device should support gyro and accel
     found_gyro = false;
     found_accel = false;
@@ -388,8 +398,16 @@ bool Realsense::startStreaming_(const cv::Size& irSize, const uint irFps, const 
   OKVIS_ASSERT_TRUE(Exception, !imuCallbacks_.empty(), "no add IMU callback registered")
 
   // Add streams of gyro and accelerometer to configuration
-  cfg_.enable_stream(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F, 200);
-  cfg_.enable_stream(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F, 400);
+  if(sensorType_ == SensorType::D455) {
+    cfg_.enable_stream(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F, 200);
+    cfg_.enable_stream(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F, 400);
+  } else if (sensorType_ == SensorType::D435i) {
+    cfg_.enable_stream(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F, 250);
+    cfg_.enable_stream(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F, 400);
+  } else {
+    cfg_.enable_stream(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F, 200);
+    cfg_.enable_stream(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F, 400);
+  }
 
   // add IR images
   cfg_.enable_stream(RS2_STREAM_INFRARED, 1, irSize.width, irSize.height, RS2_FORMAT_Y8, irFps);
@@ -397,7 +415,7 @@ bool Realsense::startStreaming_(const cv::Size& irSize, const uint irFps, const 
 
   // add color image, if callback is defined
   if(enableRgb_) {
-    OKVIS_ASSERT_TRUE(Exception, sensorType_ == SensorType::D455, "RGB requested but not supported")
+    OKVIS_ASSERT_TRUE(Exception, sensorType_ == SensorType::D455 || sensorType_ == SensorType::D435i, "RGB requested but not supported")
     cfg_.enable_stream(RS2_STREAM_COLOR, rgbSize.width, rgbSize.height, RS2_FORMAT_BGR8, rgbFps);
   }
   return true;

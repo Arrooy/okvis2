@@ -40,12 +40,10 @@
 
 namespace okvis {
 
-RealsenseRgbd::RealsenseRgbd(okvis::Realsense::SensorType sensorType, bool enableRgb, 
+RealsenseRgbd::RealsenseRgbd(bool enableRgb, 
                              bool alignDepthToRgb, double emitterPower)
-  : Realsense(sensorType, enableRgb), alignDepthToRgb_(alignDepthToRgb), 
+  : Realsense(enableRgb), alignDepthToRgb_(alignDepthToRgb), 
     emitterPower_(emitterPower) {
-  OKVIS_ASSERT_TRUE(Exception, sensorType == okvis::Realsense::SensorType::D455,
-                    "Depth channel not supported")
 }
 
 static int ctr=0;

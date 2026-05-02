@@ -53,11 +53,10 @@ namespace okvis {
 class RealsenseRgbd : public Realsense {
 public:
   /// @brief Constructor. Won't start the streaming.
-  /// @param sensorType Specify the sensor type. Only D455 supported for now.
   /// @param enableRgb Enable RGB camera?
   /// @param alignDepthToRgb If true, will align to RGB camera, else to left IR.
   /// @param emitterPower Set the emitter power. Unfortunately, this is not adaptive...
-  RealsenseRgbd(SensorType sensorType, bool enableRgb = false,
+  RealsenseRgbd(bool enableRgb = false,
                 bool alignDepthToRgb = false, double emitterPower = 150.0);
 
   /// @brief Starts streaming.

@@ -110,11 +110,11 @@ int main(int argc, char **argv) {
     std::unique_ptr<okvis::Realsense> realsense;
     if(!depth) {
       LOG(INFO) << "No depth camera enabled";
-      realsense.reset(new okvis::Realsense(okvis::Realsense::SensorType::D455, rgb));
+      realsense.reset(new okvis::Realsense(rgb));
     } else {
       LOG(INFO) << "Depth camera enabled";
       realsense.reset(
-        new okvis::RealsenseRgbd(okvis::Realsense::SensorType::D455, rgb, alignDepthToRgb));
+        new okvis::RealsenseRgbd(rgb, alignDepthToRgb));
       realsense->setIrSize(parameters.nCameraSystem.cameraGeometry(0)->imageWidth(),
                            parameters.nCameraSystem.cameraGeometry(0)->imageHeight());
     }
