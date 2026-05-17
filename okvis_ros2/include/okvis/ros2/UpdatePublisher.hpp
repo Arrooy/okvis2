@@ -65,6 +65,8 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 
+#include "okvis_ros2_interfaces/msg/update.hpp"
+
 #include <okvis/ViInterface.hpp>
 #include <okvis/kinematics/Transformation.hpp>
 #include <okvis/Parameters.hpp>
@@ -181,6 +183,8 @@ class UpdatePublisher
   /// \brief Image transporter.
   std::map<std::string, std::shared_ptr<image_transport::ImageTransport>> imagesTransport_;
   std::map<std::string, image_transport::Publisher> pubImages_; ///< Image publisher.
+
+  rclcpp::Publisher<okvis_ros2_interfaces::msg::Update>::SharedPtr pubUpdate_; ///< The actual update publisher.
 
   /// @}
   /// @name To be published

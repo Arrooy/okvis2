@@ -70,6 +70,7 @@ void UpdatePublisher::setupNode(std::shared_ptr<rclcpp::Node> node)
   pubMesh_ = node_->create_publisher<visualization_msgs::msg::Marker>("okvis_mesh", 0 );
   pubPointsMatched_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
       "okvis_points_matched", 0 );
+  pubUpdate_ = node_->create_publisher<okvis_ros2_interfaces::msg::Update>("okvis_update", 1);
 
   // get the mesh, if there is one
   // where to get the mesh from
@@ -343,6 +344,10 @@ void UpdatePublisher::publishEstimatorUpdate(
     updateMsg.updated_states.push_back(updatedStateMsg);
     updateMsg.updated_states_ids.push_back(updatedState.first.value());
   }
+
+  // and publish the update message
+  pubUpdate_->publish(updateMsg);
+  
   ////
 
   // finally the landmarks
