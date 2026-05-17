@@ -35,6 +35,7 @@ FIND_PACKAGE(tf2_ros REQUIRED)
 FIND_PACKAGE(image_transport REQUIRED)
 FIND_PACKAGE(message_filters REQUIRED)
 FIND_PACKAGE(cv_bridge REQUIRED)
+find_package(okvis_ros2_interfaces REQUIRED)
 
 # INCLUDES AND LIB DIRECTORIES
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
@@ -46,6 +47,7 @@ set(LIB_NAME okvis_ros2)
 add_library(${LIB_NAME}
   src/Subscriber.cpp
   src/RosbagReader.cpp
+  src/UpdatePublisher.cpp
   src/Publisher.cpp
   src/RePublisher.cpp
 )
@@ -99,6 +101,7 @@ AMENT_TARGET_DEPENDENCIES(
   image_transport
   tf2
   tf2_ros
+  okvis_ros2_interfaces
 )
 
 # EXPORT DEPENDENCIES
@@ -121,6 +124,7 @@ AMENT_EXPORT_DEPENDENCIES(
   image_transport
   tf2
   tf2_ros
+  okvis_ros2_interfaces
 )
 
 install(TARGETS ${LIB_NAME} EXPORT okvisTargets
