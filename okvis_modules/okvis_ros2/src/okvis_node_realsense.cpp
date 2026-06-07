@@ -51,7 +51,7 @@
 #include <okvis/RealsenseRgbd.hpp>
 #include <okvis/ThreadedSlam.hpp>
 
-#include <okvis/ros2/Publisher.hpp>
+#include <okvis/ros2/UpdatePublisher.hpp>
 #include <okvis/ros2/RePublisher.hpp>
 
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
   node->get_parameter("imu_propagated_state_publishing_rate", imu_propagated_state_publishing_rate);
 
   // publisher
-  okvis::Publisher publisher(node);
+  okvis::UpdatePublisher publisher(node);
 
   try {
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
     publisher.setOdometryPublishingRate(imu_propagated_state_publishing_rate);
     publisher.setupImageTopics(parameters.nCameraSystem);
     estimator.setOptimisedGraphCallback(
-          std::bind(&okvis::Publisher::publishEstimatorUpdate, &publisher,
+          std::bind(&okvis::UpdatePublisher::publishEstimatorUpdate, &publisher,
                     std::placeholders::_1, std::placeholders::_2,
                     std::placeholders::_3, std::placeholders::_4));
                     
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
           std::bind(&okvis::ThreadedSlam::addImuMeasurement, &estimator,
                     std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     realsense->setImuCallback(
-          std::bind(&okvis::Publisher::realtimePredictAndPublish, &publisher,
+          std::bind(&okvis::UpdatePublisher::realtimePredictAndPublish, &publisher,
                     std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     realsense->setImuCallback(
           std::bind(&okvis::RePublisher::publishImuMeasurement, &rePublisher,

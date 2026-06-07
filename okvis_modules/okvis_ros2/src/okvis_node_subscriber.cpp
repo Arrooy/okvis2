@@ -47,7 +47,7 @@
 #include <glog/logging.h>
 
 #include <okvis/ros2/Subscriber.hpp>
-#include <okvis/ros2/Publisher.hpp>
+#include <okvis/ros2/UpdatePublisher.hpp>
 #include <okvis/ThreadedSlam.hpp>
 #include <okvis/DatasetWriter.hpp>
 #include <okvis/ViParametersReader.hpp>
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
   node->get_parameter("imu_propagated_state_publishing_rate", imu_propagated_state_publishing_rate);
 
   // publisher
-  okvis::Publisher publisher(node);
+  okvis::UpdatePublisher publisher(node);
 
   // construct OKVIS side
   okvis::ViParametersReader viParametersReader(configFilename);
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   publisher.setOdometryPublishingRate(imu_propagated_state_publishing_rate);
   publisher.setupImageTopics(parameters.nCameraSystem);
   estimator.setOptimisedGraphCallback(
-        std::bind(&okvis::Publisher::publishEstimatorUpdate, &publisher,
+        std::bind(&okvis::UpdatePublisher::publishEstimatorUpdate, &publisher,
                   std::placeholders::_1, std::placeholders::_2,
                   std::placeholders::_3, std::placeholders::_4));
 

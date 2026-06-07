@@ -325,9 +325,7 @@ void UpdatePublisher::publishEstimatorUpdate(
   trackingStateMsg.id = trackingState.id.value(); // ID this tracking info refers to.
   trackingStateMsg.is_keyframe = trackingState.isKeyframe; // Is it a keyframe?
   ///trackingStateMsg.is_lidar_keyframe = trackingState.isLidarKeyframe; // Is it a keyframe triggered by lidar?
-  trackingStateMsg.tracking_quality = 
-      (trackingState.trackingQuality == TrackingQuality::Good) ? 2 : 
-      ((trackingState.trackingQuality == TrackingQuality::Lost) ? 0 : 1); // The tracking quality.
+  trackingStateMsg.tracking_quality = static_cast<std::underlying_type_t<TrackingQuality>>(trackingState.trackingQuality); // The tracking quality.
   trackingStateMsg.recognised_place = trackingState.recognisedPlace; // Has this fram recognised a place / relocalised / loop-closed?
   trackingStateMsg.is_full_graph_optimising = trackingState.isFullGraphOptimising; // Is the background loop closure optimisation currently ongoing?
   trackingStateMsg.current_keyframe_id = trackingState.currentKeyframeId.value(); // The ID of the current keyframe.

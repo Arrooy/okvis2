@@ -158,9 +158,9 @@ struct State {
 
 /// @brief Simple enum to denote the tracking quality.
 enum class TrackingQuality {
-  Good, ///< Good quality for at least 30% of the image containing tracks.
-  Marginal, ///< Marginal quality below that 30% level.
-  Lost ///< Lost, if only one or less keypoints are matched per image.
+  Good = 2, ///< Good quality for at least 30% of the image containing tracks.
+  Marginal = 1, ///< Marginal quality below that 30% level.
+  Lost = 0 ///< Lost, if only one or less keypoints are matched per image.
 };
 
 /// @brief A helper struct to hold information about the tracking state.

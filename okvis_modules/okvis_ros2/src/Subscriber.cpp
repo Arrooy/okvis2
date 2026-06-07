@@ -51,7 +51,7 @@ Subscriber::~Subscriber()
 
 Subscriber::Subscriber(std::shared_ptr<rclcpp::Node> node,
                        okvis::ViInterface* viInterface,
-                       okvis::Publisher* publisher, 
+                       okvis::UpdatePublisher* publisher, 
                        const okvis::ViParameters& parameters)
 {
   viInterface_ = viInterface;

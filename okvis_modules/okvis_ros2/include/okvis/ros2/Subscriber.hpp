@@ -66,7 +66,7 @@
 #include <okvis/assert_macros.hpp>
 #include <okvis/ViParametersReader.hpp>
 #include <okvis/kinematics/Transformation.hpp>
-#include <okvis/ros2/Publisher.hpp>
+#include <okvis/ros2/UpdatePublisher.hpp>
 
 /// \brief okvis Main namespace of this package.
 namespace okvis {
@@ -91,7 +91,7 @@ class Subscriber
    * @param parameters  VI parameters.
    */
   Subscriber(std::shared_ptr<rclcpp::Node> node, okvis::ViInterface* viInterfacePtr,
-             okvis::Publisher* publisher,
+             okvis::UpdatePublisher* publisher,
              const okvis::ViParameters& parameters);
 
   /// @brief Set the node handle. This sets up the callbacks. This is called in the constructor.
@@ -123,7 +123,7 @@ class Subscriber
   /// @}
   
   okvis::ViInterface* viInterface_ = nullptr;   ///< The VioInterface. (E.g. ThreadedSlam).
-  okvis::Publisher* publisher_ = nullptr;  ///< Publisher for IMU propagation.
+  okvis::UpdatePublisher* publisher_ = nullptr;  ///< Publisher for IMU propagation.
   okvis::ViParameters parameters_;  ///< The parameters and settings.
   
   std::mutex imagesReceived_mutex_; ///< Lock when accessing buffer.

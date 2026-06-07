@@ -188,7 +188,7 @@ if(BUILD_ROS2)
   endif()
 endif()
 if(BUILD_ROS2)
- include_directories(okvis_ros2/include/)
+  include_directories(okvis_ros2/include/)
   MESSAGE(STATUS "Building ROS2 wrapper")
 
   #LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -343,6 +343,17 @@ if(BUILD_ROS2)
     ${PCL_LIBRARIES}
   )
   INSTALL(TARGETS okvis_node_subscriber DESTINATION lib/${PROJECT_NAME})
+
+    ADD_EXECUTABLE(okvis_node_receiver okvis_ros2/src/okvis_node_receiver.cpp)
+  TARGET_LINK_LIBRARIES(
+    okvis_node_receiver
+    okvis::Ros2
+    ${OpenCV_LIBS}
+    ${SUITESPARSE_LIBRARIES}
+    ${Boost_LIBRARIES} 
+    ${PCL_LIBRARIES}
+  )
+  INSTALL(TARGETS okvis_node_receiver DESTINATION lib/${PROJECT_NAME})
   
   if(HAVE_LIBREALSENSE)
     ADD_EXECUTABLE(okvis_node_realsense okvis_ros2/src/okvis_node_realsense.cpp)
