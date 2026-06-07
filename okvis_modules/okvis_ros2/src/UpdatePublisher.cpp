@@ -44,7 +44,7 @@
 
 #include <okvis/FrameTypedefs.hpp>
 
-#include "okvis_ros2_interfaces/msg/update.hpp"
+#include "okvis_interfaces/msg/update.hpp"
 
 /// \brief okvis Main namespace of this package.
 namespace okvis {
@@ -70,7 +70,7 @@ void UpdatePublisher::setupNode(std::shared_ptr<rclcpp::Node> node)
   pubMesh_ = node_->create_publisher<visualization_msgs::msg::Marker>("okvis_mesh", 0 );
   pubPointsMatched_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
       "okvis_points_matched", 0 );
-  pubUpdate_ = node_->create_publisher<okvis_ros2_interfaces::msg::Update>("okvis_update", 1);
+  pubUpdate_ = node_->create_publisher<okvis_interfaces::msg::Update>("okvis_update", 1);
 
   // get the mesh, if there is one
   // where to get the mesh from
@@ -230,7 +230,7 @@ bool UpdatePublisher::realtimePredictAndPublish(const okvis::Time& stamp,
   return true;
 }
 
-void cvtState2Msg(const State& state, okvis_ros2_interfaces::msg::State & stateMsg) 
+void cvtState2Msg(const State& state, okvis_interfaces::msg::State & stateMsg) 
 {
   // state
   stateMsg.header.frame_id = "world";
@@ -263,7 +263,7 @@ void cvtState2Msg(const State& state, okvis_ros2_interfaces::msg::State & stateM
   stateMsg.id = state.id.value();
   // IMU measurements up to this state's time.
   for(const auto& imu : state.previousImuMeasurements) {
-    ::okvis_ros2_interfaces::msg::ImuCompact imuCompactMsg;
+    ::okvis_interfaces::msg::ImuCompact imuCompactMsg;
     imuCompactMsg.header.frame_id = "world";
     imuCompactMsg.header.stamp = rclcpp::Time(imu.timeStamp.sec, imu.timeStamp.nsec);
     imuCompactMsg.angular_velocity.x = imu.measurement.gyroscopes[0];
@@ -317,11 +317,11 @@ void UpdatePublisher::publishEstimatorUpdate(
 
   //// assemble and publish the update message:
   // current state
-  okvis_ros2_interfaces::msg::State stateMsg;
+  okvis_interfaces::msg::State stateMsg;
   cvtState2Msg(state, stateMsg);
 
   // tracking state
-  okvis_ros2_interfaces::msg::TrackingState trackingStateMsg;
+  okvis_interfaces::msg::TrackingState trackingStateMsg;
   trackingStateMsg.id = trackingState.id.value(); // ID this tracking info refers to.
   trackingStateMsg.is_keyframe = trackingState.isKeyframe; // Is it a keyframe?
   ///trackingStateMsg.is_lidar_keyframe = trackingState.isLidarKeyframe; // Is it a keyframe triggered by lidar?
@@ -333,13 +333,13 @@ void UpdatePublisher::publishEstimatorUpdate(
   trackingStateMsg.current_keyframe_id = trackingState.currentKeyframeId.value(); // The ID of the current keyframe.
 
   // compose the overall message
-  okvis_ros2_interfaces::msg::Update updateMsg;  // Update message.
+  okvis_interfaces::msg::Update updateMsg;  // Update message.
   updateMsg.state = stateMsg;
   updateMsg.tracking_state = trackingStateMsg;
   
   // add all updated states
   for(const auto & updatedState : *updatedStates) {
-    okvis_ros2_interfaces::msg::State updatedStateMsg;
+    okvis_interfaces::msg::State updatedStateMsg;
     cvtState2Msg(updatedState.second, updatedStateMsg);
     updateMsg.updated_states.push_back(updatedStateMsg);
     updateMsg.updated_states_ids.push_back(updatedState.first.value());

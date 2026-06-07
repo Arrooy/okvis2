@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>okvis_ros2</name>
+  <name>okvis</name>
   <version>0.0.0</version>
   <description>OKVIS ROS2</description>
 
@@ -33,7 +33,7 @@
   <depend>launch</depend>
   <depend>launch_testing</depend>
   <depend>launch_testing_ros</depend>
-  <depend>okvis_ros2_interfaces</depend>
+  <depend>okvis_interfaces</depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
   <exec_depend>ros2launch</exec_depend>
