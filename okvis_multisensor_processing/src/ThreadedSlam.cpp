@@ -55,7 +55,20 @@
 namespace okvis
 {
 
-static const int cameraInputQueueSize = 2;
+// Fork patch (indoor_fly_ground_control): was 2. In non-blocking mode
+// (okvis2::Okvis2Slam adapter's setBlocking(false) -- needed to avoid a
+// producer-thread deadlock when a recording's first camera frame predates its
+// first IMU sample) a depth-2 queue drops frames under any transient backend
+// stall (e.g. background loop-closure BA), and WHICH frame gets dropped is a
+// timing race -- observed to occasionally hand the estimator a corrupted/
+// discontinuous IMU integration window, causing catastrophic non-deterministic
+// divergence (position runaway into the tens of kilometres, accel bias
+// exploding to -94 m/s^2) on an otherwise-identical run of the same dataset.
+// 30 wasn't enough on its own for a "richer motion" recording (still diverged
+// on 2/3 runs, smaller blowups) -- fixed properly by also draining the queue
+// fully every call in okvis2_slam.cpp (was capped at 3 processFrame() calls),
+// this larger size is now just headroom, not the primary fix.
+static const int cameraInputQueueSize = 200;
 
 // overlap of imu data before and after two consecutive frames [seconds]:
 static const double imuTemporalOverlap = 0.02;
